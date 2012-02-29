@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main0.1.ui'
 #
-# Created: Tue Feb 28 18:44:41 2012
+# Created: Tue Feb 28 21:03:50 2012
 #      by: PyQt4 UI code generator 4.9
 #
 # WARNING! All changes made in this file will be lost!
@@ -41,12 +41,17 @@ class Ui_MainWindow(object):
         self.searchBar = QtGui.QTextEdit(self.centralwidget)
         self.searchBar.setGeometry(QtCore.QRect(600, 20, 175, 25))
         self.searchBar.setObjectName(_fromUtf8("searchBar"))
-        self.tableView = QtGui.QTableView(self.centralwidget)
-        self.tableView.setGeometry(QtCore.QRect(25, 50, 750, 575))
-        self.tableView.setObjectName(_fromUtf8("tableView"))
-        self.addButton = QtGui.QPushButton(self.centralwidget)
-        self.addButton.setGeometry(QtCore.QRect(40, 20, 75, 23))
-        self.addButton.setObjectName(_fromUtf8("addButton"))
+        self.gridLayoutWidget = QtGui.QWidget(self.centralwidget)
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(20, 50, 771, 571))
+        self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
+        self.eventGrid = QtGui.QGridLayout(self.gridLayoutWidget)
+        self.eventGrid.setContentsMargins(20, 20, -1, -1)
+        self.eventGrid.setHorizontalSpacing(100)
+        self.eventGrid.setVerticalSpacing(20)
+        self.eventGrid.setObjectName(_fromUtf8("eventGrid"))
+        self.addEventButton = QtGui.QPushButton(self.centralwidget)
+        self.addEventButton.setGeometry(QtCore.QRect(20, 20, 75, 23))
+        self.addEventButton.setObjectName(_fromUtf8("addEventButton"))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 814, 21))
@@ -66,5 +71,5 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Search...</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.addButton.setText(QtGui.QApplication.translate("MainWindow", "PushButton", None, QtGui.QApplication.UnicodeUTF8))
+        self.addEventButton.setText(QtGui.QApplication.translate("MainWindow", "Add Event", None, QtGui.QApplication.UnicodeUTF8))
 

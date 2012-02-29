@@ -51,27 +51,41 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Search...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QTableView" name="tableView">
+   <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>25</x>
+      <x>20</x>
       <y>50</y>
-      <width>750</width>
-      <height>575</height>
+      <width>771</width>
+      <height>571</height>
      </rect>
     </property>
+    <layout class="QGridLayout" name="eventGrid">
+     <property name="leftMargin">
+      <number>20</number>
+     </property>
+     <property name="topMargin">
+      <number>20</number>
+     </property>
+     <property name="horizontalSpacing">
+      <number>100</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>20</number>
+     </property>
+    </layout>
    </widget>
-   <widget class="QPushButton" name="addButton">
+   <widget class="QPushButton" name="addEventButton">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>20</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Add Event</string>
     </property>
    </widget>
   </widget>
