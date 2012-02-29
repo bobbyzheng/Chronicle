@@ -7,20 +7,25 @@ class StartQT4(QtGui.QMainWindow):
         QtGui.QWidget.__init__(self,parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.cols = 24
+        self.rows = 7
         self.event_widgets = []
+        self.setupCalendar(self)
         QtCore.QObject.connect(self.ui.addEventButton, QtCore.SIGNAL("clicked()"), self.addEvent)
         
-    def addEvent(self):
-        cols = self.ui.eventGrid.columnCount()
-        rows = self.ui.eventGrid.rowCount()
-        eventindex = (int(len(self.event_widgets)/rows),len(self.event_widgets)%cols)
+    def setupCalendar(self):
+        for i in range(0,self.rows):
+            for j in range(0,self.cols):
+                new_event_widget = QtGui.QPushButton(self.ui.centralwidget)
+                new_event_widget.setGeometry(self.ui.eventGrid.cellRect(i,j))
+                new_event_widget.setObjectName("tmpWidget"+str(len(self.event_widgets)+1))
+                self.event_widgets.append(new_event_widget)
+                self.ui.eventGrid.addWidget(new_event_widget, i, j)
+       
 
-        new_event_widget = QtGui.QPushButton(self.ui.centralwidget)
-        new_event_widget.setGeometry(self.ui.eventGrid.cellRect(eventindex[0], eventindex[1]))
-        new_event_widget.setObjectName("tmpWidget"+str(len(self.event_widgets)+1))
+
+    def addEvent(self):
         
-        self.event_widgets.append(new_event_widget)
-        self.ui.eventGrid.addWidget(new_event_widget)
 
 
 if __name__ == "__main__":
