@@ -1,10 +1,7 @@
 package chronicle.client;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
-import android.media.MediaRecorder;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
