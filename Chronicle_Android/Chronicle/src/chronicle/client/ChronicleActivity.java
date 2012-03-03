@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -30,7 +31,10 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,12 +44,73 @@ public class ChronicleActivity extends Activity {
 	MediaRecorder mMediaRecorder;
 	private boolean recording;
 	private CameraPreview mPreview;
-
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	  super.onConfigurationChanged(newConfig);
+	  //setContentView(R.layout.main);
+	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		recording = false;
-		setContentView(R.layout.main); 
+		if(!checkCameraHardware(this)) {
+			Toast.makeText(getApplicationContext(), "No Camera", Toast.LENGTH_LONG).show();
+			finish();
+		}
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.calendar); 
+
+	    GridView gridview = (GridView) findViewById(R.id.gridview);
+	    gridview.setAdapter(new CalendarAdapter(this));
+
+	    gridview.setOnItemClickListener(new OnItemClickListener() {
+	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+	            Toast.makeText(getApplicationContext(), "" + position, Toast.LENGTH_SHORT).show();
+	    		setContentView(R.layout.main); 
+
+	    		 mCamera = getCameraInstance();
+	    	     mPreview = new CameraPreview(getApplicationContext(), mCamera);
+	    	     FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+	    	     preview.addView(mPreview);
+	    	     preview.setOnTouchListener(
+	    	        		new View.OnTouchListener() {
+	    	        			@Override
+	    	        			public boolean onTouch(View v, MotionEvent event) {
+	    	        				mCamera.stopPreview();
+	    	        				if (recording) {
+	    	        	                // stop recording and release camera
+	    	        	                mMediaRecorder.stop();  // stop the recording
+	    	        	                releaseMediaRecorder(); // release the MediaRecorder object
+	    	        	                mCamera.lock();         // take camera access back from MediaRecorder
+	    	        	        		Toast.makeText(getApplicationContext(), "STOPPED RECORDING", Toast.LENGTH_SHORT).show();
+	    	        	                // inform the user that recording has stopped
+	    	        	                recording = false;
+	    	        	            } 
+	    	        				else {
+	    	        	                // initialize video camera
+	    	        	                if (prepareVideoRecorder()) {
+	    	    	        				Log.d("PREPARE", "SUCCESS");
+	    	    	        				Toast.makeText(getApplicationContext(), "RECORDING", Toast.LENGTH_SHORT).show();
+	    	        	                    mMediaRecorder.start();
+	    	        	                    recording = true;
+	    	        	                } 
+	    	        	                else {
+	    	    	        				Log.d("PREPARE", "FAILED");
+	    	    	        				Toast.makeText(getApplicationContext(), "PREPARE FAILED", Toast.LENGTH_SHORT).show();
+	    	        	                    // prepare didn't work, release the camera
+	    	        	                    releaseMediaRecorder();
+	    	        	                }
+	    	        	            }
+	    	        				return false;
+	    	        				
+	    	        			}
+	    	        		}
+	    	        );  
+	    	     //preview.addView(mPreview);
+	    		Toast.makeText(getApplicationContext(), "BLAST PAST", Toast.LENGTH_LONG).show();
+	    		
+	        }
+	    });
+/*
 		if(!checkCameraHardware(this)) {
 			Toast.makeText(getApplicationContext(), "No Camera", Toast.LENGTH_LONG).show();
 			finish();
@@ -91,6 +156,8 @@ public class ChronicleActivity extends Activity {
 	        );  
 	     //preview.addView(mPreview);
 		Toast.makeText(getApplicationContext(), "BLAST PAST", Toast.LENGTH_LONG).show();
+		*/
+	    
 	}
 	
 	private boolean checkCameraHardware(Context context) {
