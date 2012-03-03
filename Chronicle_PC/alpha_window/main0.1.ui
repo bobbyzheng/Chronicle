@@ -62,16 +62,10 @@ p, li { white-space: pre-wrap; }
     </property>
     <layout class="QGridLayout" name="eventGrid">
      <property name="leftMargin">
-      <number>20</number>
+      <number>0</number>
      </property>
      <property name="topMargin">
-      <number>20</number>
-     </property>
-     <property name="horizontalSpacing">
-      <number>100</number>
-     </property>
-     <property name="verticalSpacing">
-      <number>20</number>
+      <number>0</number>
      </property>
     </layout>
    </widget>
