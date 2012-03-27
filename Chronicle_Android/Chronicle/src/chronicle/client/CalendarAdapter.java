@@ -64,12 +64,15 @@ public class CalendarAdapter extends BaseAdapter {
 
         String event = cells[position];
         ImageView iw = (ImageView)v.findViewById(R.id.date_icon);
-        if(event.length()>0 && events!=null && events.contains(event)) {        	
+        /*
+        if(event.length()>0 && events!=null && events.contains(event)) {        		
         	iw.setVisibility(View.VISIBLE);
         }
         else {
         	iw.setVisibility(View.INVISIBLE);
         }
+        */
+        iw.setVisibility(View.INVISIBLE);
         return v;
         //scheduleView.setText(cells[position]);
         //return scheduleView;

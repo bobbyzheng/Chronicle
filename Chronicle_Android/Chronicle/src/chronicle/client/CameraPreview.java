@@ -1,16 +1,28 @@
 package chronicle.client;
+import android.view.WindowManager;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.widget.Toast;
 import java.io.IOException;
 
 
 
+
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	  super.onConfigurationChanged(newConfig);
+	  //setContentView(R.layout.main);
+	}
     private SurfaceHolder mHolder;
     private Camera mCamera;
 
@@ -31,6 +43,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     
     
     public void surfaceCreated(SurfaceHolder holder) {
+    	
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
             mCamera.setPreviewDisplay(holder);
@@ -65,6 +78,33 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         // start preview with new settings
         try {
+        	/*
+        	Parameters parameters = mCamera.getParameters();     	
+            Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+        	if(display.getRotation() == Surface.ROTATION_0)
+        	{
+        		parameters.setPreviewSize(h, w);                           
+        		mCamera.setDisplayOrientation(90);
+              	}
+        	
+        	if(display.getRotation() == Surface.ROTATION_90)
+        	{
+        		parameters.setPreviewSize(w, h);                           
+                	}
+        	
+        	if(display.getRotation() == Surface.ROTATION_180)
+        	{
+        		parameters.setPreviewSize(h, w);               
+                	}
+        	
+        	if(display.getRotation() == Surface.ROTATION_270)
+        	{
+        		parameters.setPreviewSize(w, h);
+        		mCamera.setDisplayOrientation(180);
+                	}
+        	
+        	mCamera.setParameters(parameters);
+        	*/
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
 
