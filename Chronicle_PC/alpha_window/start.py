@@ -7,20 +7,22 @@ class StartQT4(QtGui.QMainWindow):
         QtGui.QWidget.__init__(self,parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
         self.event_widgets = []
-        QtCore.QObject.connect(self.ui.addEventButton, QtCore.SIGNAL("clicked()"), self.addEvent)
         
-    def addEvent(self):
-        #width = self.ui.eventGrid.layoutHorizontalSpacing
-        #height = self.ui.eventGrid.layoutVerticalSpacing
-        new_event_widget = QtGui.QPushButton(self.ui.centralwidget)
-        new_event_widget.setGeometry(QtCore.QRect(0,0,20,20))
-        new_event_widget.setObjectName("tmpWidget"+str(len(self.event_widgets)+1))
-        
-        self.event_widgets.append(new_event_widget)
-        self.ui.eventGrid.addWidget(new_event_widget)
+        for i in range(0,5):
+            self.ui.eventGrid.setRowMinimumHeight(i,30)
+            self.ui.eventGrid.setColumnMinimumWidth(i,30)
+            
+        for i in range(0,5):
+            for j in range(0,5):
+                tmp_btn = QtGui.QPushButton(self.ui.centralwidget)
+                tmp_btn.setObjectName("eventWidget"+str(len(self.event_widgets)))
+                QtCore.QObject.connect(tmp_btn, QtCore.SIGNAL("clicked()"), tmp_btn.hide)
+                self.ui.eventGrid.addWidget(tmp_btn, i,j)
+                self.event_widgets.append(tmp_btn)
+                
 
+            
 
 if __name__ == "__main__":
         app = QtGui.QApplication(sys.argv)

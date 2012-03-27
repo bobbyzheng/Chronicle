@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main0.1.ui'
 #
-# Created: Tue Feb 28 21:03:50 2012
+# Created: Fri Mar  2 18:59:29 2012
 #      by: PyQt4 UI code generator 4.9
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,12 +42,10 @@ class Ui_MainWindow(object):
         self.searchBar.setGeometry(QtCore.QRect(600, 20, 175, 25))
         self.searchBar.setObjectName(_fromUtf8("searchBar"))
         self.gridLayoutWidget = QtGui.QWidget(self.centralwidget)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(20, 50, 771, 571))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(20, 60, 771, 571))
         self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
         self.eventGrid = QtGui.QGridLayout(self.gridLayoutWidget)
-        self.eventGrid.setContentsMargins(20, 20, -1, -1)
-        self.eventGrid.setHorizontalSpacing(100)
-        self.eventGrid.setVerticalSpacing(20)
+        self.eventGrid.setContentsMargins(0, 0, -1, -1)
         self.eventGrid.setObjectName(_fromUtf8("eventGrid"))
         self.addEventButton = QtGui.QPushButton(self.centralwidget)
         self.addEventButton.setGeometry(QtCore.QRect(20, 20, 75, 23))

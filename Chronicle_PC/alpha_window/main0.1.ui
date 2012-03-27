@@ -55,23 +55,17 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>50</y>
+      <y>60</y>
       <width>771</width>
       <height>571</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="eventGrid">
      <property name="leftMargin">
-      <number>20</number>
+      <number>0</number>
      </property>
      <property name="topMargin">
-      <number>20</number>
-     </property>
-     <property name="horizontalSpacing">
-      <number>100</number>
-     </property>
-     <property name="verticalSpacing">
-      <number>20</number>
+      <number>0</number>
      </property>
     </layout>
    </widget>
