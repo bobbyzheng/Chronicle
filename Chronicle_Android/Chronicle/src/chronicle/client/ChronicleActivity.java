@@ -16,11 +16,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import android.view.WindowManager;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -45,24 +50,31 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class ChronicleActivity extends Activity {
 	String tags;
 	String environmentOutputFile;
+	SQLiteDatabase fileDataBase;
 	String timeStamp;
 	Camera mCamera;
 	MediaRecorder mMediaRecorder;
 	private boolean recording;
 	FileWriter tagFile;
 	private CameraPreview mPreview;
+	int startTime;
 	public CalendarAdapter adapter;
 	PowerManager pm;
 	PowerManager.WakeLock wl;
+	ListView filesList;
 	//AlertDialog.Builder builder;
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -78,13 +90,17 @@ public class ChronicleActivity extends Activity {
 			finish();
 		}
 		super.onCreate(savedInstanceState);
+		
+		
 		setContentView(R.layout.main); 
-
-		Button button = (Button) findViewById(R.id.recordButton);
+		filesList = (ListView) findViewById(R.id.savedFiles);
+		this.fileDataBase = this.openOrCreateDatabase("fileDB", MODE_PRIVATE, null);
+	    this.fileDataBase.execSQL("CREATE TABLE IF NOT EXISTS table_of_dics(value TEXT)");
+		this.update_list();
+	    Button button = (Button) findViewById(R.id.recordButton);
 		button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				startPreview();
-				// Perform action on click
 			}
 		});
 	}
@@ -106,15 +122,23 @@ public class ChronicleActivity extends Activity {
 		preview = (FrameLayout) findViewById(R.id.camera_preview);
 		registerForContextMenu(preview);
 		preview.addView(mPreview);
+		
 		final AlertDialog.Builder builderStart = new AlertDialog.Builder(ChronicleActivity.this);
 		builderStart.setMessage("Start recording?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
+				mCamera.stopPreview();
+
 				if (prepareVideoRecorder()) {
+
 					wl.acquire();
 					Log.d("PREPARE", "SUCCESS");
 					Toast.makeText(getApplicationContext(), "RECORDING", Toast.LENGTH_SHORT).show();
 					mMediaRecorder.start();
+					Calendar c = Calendar.getInstance(); 
+					startTime = c.get(Calendar.HOUR)*3600 + c.get(Calendar.MINUTE)*60 + c.get(Calendar.SECOND);
 					recording = true;
+					Toast.makeText(getApplicationContext(), "RECORDING2", Toast.LENGTH_SHORT).show();
+
 				} 
 				else {
 					Log.d("PREPARE", "FAILED");
@@ -126,7 +150,28 @@ public class ChronicleActivity extends Activity {
 		})
 		.setNegativeButton("Leave a tag", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				dialog.cancel();
+				AlertDialog.Builder tagAlert = new AlertDialog.Builder(ChronicleActivity.this);
+				tagAlert.setTitle("Leave a tag");
+				//tagAlert.setMessage("Message");
+				// Set an EditText view to get user input 
+				final EditText input = new EditText(ChronicleActivity.this);
+				tagAlert.setView(input);
+				tagAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						String value = input.getText().toString();
+						Calendar c = Calendar.getInstance(); 
+						int currentTime = c.get(Calendar.HOUR)*3600 + c.get(Calendar.MINUTE)*60 + c.get(Calendar.SECOND);;
+						tags=tags+value+":::"+"0000000000"+";;;";
+					}
+				});
+				tagAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						// Canceled.
+					}
+				});
+				tagAlert.show();
+				//tags=tags+"TESTING SAVING A TAG";
+				//dialog.cancel();
 			}
 		});
 		final AlertDialog.Builder builderStop = new AlertDialog.Builder(ChronicleActivity.this);
@@ -134,7 +179,7 @@ public class ChronicleActivity extends Activity {
 			public void onClick(DialogInterface dialog, int id) {
 				wl.release();
 				// stop recording and release camera
-				//writeTagFile(tags);
+				writeTagFile(tags);
 				mMediaRecorder.stop();  // stop the recording
 				releaseMediaRecorder(); // release the MediaRecorder object
 				mCamera.lock();         // take camera access back from MediaRecorder
@@ -145,7 +190,28 @@ public class ChronicleActivity extends Activity {
 		})
 		.setNegativeButton("Leave a tag", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				dialog.cancel();
+				AlertDialog.Builder tagAlert = new AlertDialog.Builder(ChronicleActivity.this);
+				tagAlert.setTitle("Leave a tag");
+				Calendar c = Calendar.getInstance(); 
+				final int currentTime = c.get(Calendar.HOUR)*3600 + c.get(Calendar.MINUTE)*60 + c.get(Calendar.SECOND);;
+
+				//tagAlert.setMessage("Message");
+				// Set an EditText view to get user input 
+				final EditText input = new EditText(ChronicleActivity.this);
+				tagAlert.setView(input);
+				tagAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						String value = input.getText().toString();
+						tags=tags+value+":::"+Integer.toString(currentTime-startTime)+";;;";
+					}
+				});
+				tagAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						// Canceled.
+					}
+				});
+				tagAlert.show();
+				//dialog.cancel();
 			}
 		});
 
@@ -160,31 +226,28 @@ public class ChronicleActivity extends Activity {
 	     }
 		 */
 
-		//	     PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		//     final PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
 		preview.setOnTouchListener(
 				new View.OnTouchListener() {
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
 						int action = event.getActionMasked();
 						if (action == MotionEvent.ACTION_DOWN){
-							registerForContextMenu(v);
-							//mCamera.stopPreview();builder = new AlertDialog.Builder(this);
-							
-
+							//registerForContextMenu(v);
+							//mCamera.stopPreview();
 							if (recording){
-								builderStop.create();
-								builderStop.create();
+								//builderStop.create();
+								builderStop.show();
 							}
 							else{
-								builderStart.create();
+								//builderStart.create();
 								builderStart.show();
 							}
 						}
-						return false;
+						return true;
 					}
 				}
 				);  
+		
 		//preview.addView(mPreview);
 		Toast.makeText(getApplicationContext(), "BLAST PAST", Toast.LENGTH_LONG).show();
 
@@ -199,6 +262,23 @@ public class ChronicleActivity extends Activity {
 			// no camera on this device
 			return false;
 		}
+	}
+
+	private void update_list() {
+		//fileDataBase.execSQL("INSERT INTO table_of_dics(value) VALUES('TEST')");
+		//fileDataBase.execSQL("INSERT INTO table_of_dics(value) VALUES('TEST3')");
+		//fileDataBase.execSQL("INSERT INTO table_of_dics(value) VALUES('TES2T')");
+
+		
+		ArrayList<String> db_results = new ArrayList<String>();
+		Cursor cursor = fileDataBase.rawQuery("SELECT value FROM table_of_dics ORDER BY value", null);
+		while(cursor.moveToNext()) {
+			db_results.add(String.valueOf(cursor.getString(cursor.getColumnIndex("value"))));
+			//db_results.add(cursor.getColumnIndex("value"));
+			//db_results.add("TEST");
+		}
+		cursor.close();
+		this.filesList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, db_results));
 	}
 
 	public static Camera getCameraInstance() {
@@ -220,7 +300,7 @@ public class ChronicleActivity extends Activity {
 				Log.e("TravellerLog :: ", "Problem creating Image folder");
 			}
 		}
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); 
+		timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); 
 		/*
 		try {
 			FileWriter tagFile = new FileWriter(Environment.getExternalStorageDirectory()+"/recordedMedia/"+timeStamp+".txt");
@@ -280,9 +360,22 @@ public class ChronicleActivity extends Activity {
     }
     private void writeTagFile(String tags){
     	try {
-			FileWriter tagFile = new FileWriter(Environment.getExternalStorageDirectory()+"/recordedMedia/"+timeStamp+".txt");
-			tagFile.write(tags);
+			Log.d("WRITETAG", "Attempting to write to tag file "+tags);
+			
+
+    		File tagFile = new File(Environment.getExternalStorageDirectory()+"/recordedMedia/"+timeStamp+".txt");
+			FileWriter tagWriter = new FileWriter(tagFile);
+    		//FileWriter tagFile = new FileWriter(Environment.getExternalStorageDirectory()+"/recordedMedia/"+timeStamp+".txt");
+			tagWriter.write(tags);
+			tagWriter.write(";IS THIS WRITING?");
+			tagWriter.flush();
+			tagWriter.close();
+			Log.d("WRITETAG", "Supposedly successful write to tag file");
+			fileDataBase.execSQL("INSERT INTO table_of_dics(value) VALUES('"+timeStamp+"')");
+
 		} catch (IOException e1) {
+			Log.d("WRITETAG", "IOException writing to tag file: " + e1.getMessage());
+
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}

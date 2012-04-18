@@ -11,8 +11,7 @@
     android:layout_height="fill_parent"
     android:layout_weight="1"
     >
-      <ExpandableListView android:id="@+id/savedFiles" android:layout_width="match_parent" android:layout_height="423dp"></ExpandableListView>
+      <ListView android:id="@+id/savedFiles" android:layout_width="match_parent" android:layout_height="423dp"></ListView>
       <Button android:id="@+id/recordButton" android:text="Record" android:layout_height="wrap_content" android:layout_gravity="bottom" android:layout_width="match_parent"></Button>
   </FrameLayout>
-//FIGURE OUT HOW TO NEST ANOTHER FRAMELAYOUT HERE AS CAMERA_PREVIEW2
 </LinearLayout>
