@@ -25,16 +25,21 @@ public final class R {
         public static final int camera_preview=0x7f070003;
         public static final int date=0x7f070001;
         public static final int date_icon=0x7f070002;
+        public static final int event_=0x7f070004;
         public static final int gridview=0x7f070000;
-        public static final int mainMenu=0x7f070004;
-        public static final int recordButton=0x7f070006;
-        public static final int savedFiles=0x7f070005;
+        public static final int leaveatag=0x7f070006;
+        public static final int mainMenu=0x7f070008;
+        public static final int recordButton=0x7f07000a;
+        public static final int savedFiles=0x7f070009;
+        public static final int taglist=0x7f070005;
+        public static final int viewVideoButton=0x7f070007;
     }
     public static final class layout {
         public static final int calendar=0x7f030000;
         public static final int calendar_item=0x7f030001;
         public static final int camera_preview=0x7f030002;
-        public static final int main=0x7f030003;
+        public static final int event_info=0x7f030003;
+        public static final int main=0x7f030004;
     }
     public static final class menu {
         public static final int context_menu=0x7f060000;

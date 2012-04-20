@@ -12,9 +12,13 @@ import android.hardware.Camera.Parameters;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,6 +51,7 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -75,6 +80,8 @@ public class ChronicleActivity extends Activity {
 	PowerManager pm;
 	PowerManager.WakeLock wl;
 	ListView filesList;
+	private Object tagList;
+	
 	//AlertDialog.Builder builder;
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -89,23 +96,70 @@ public class ChronicleActivity extends Activity {
 			Toast.makeText(getApplicationContext(), "No Camera", Toast.LENGTH_LONG).show();
 			finish();
 		}
-		super.onCreate(savedInstanceState);
-		
-		
+		super.onCreate(savedInstanceState);		
 		setContentView(R.layout.main); 
+		
 		filesList = (ListView) findViewById(R.id.savedFiles);
+		//filesList.setOnClickListener(new View.OnClickListener() {
+		filesList.setOnItemClickListener(new OnItemClickListener(){
+			
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				String test = arg0.getItemAtPosition(arg2).toString();
+				viewEventTags(test);
+			}			
+		});
+		
 		this.fileDataBase = this.openOrCreateDatabase("fileDB", MODE_PRIVATE, null);
 	    this.fileDataBase.execSQL("CREATE TABLE IF NOT EXISTS table_of_dics(value TEXT)");
 		this.update_list();
-	    Button button = (Button) findViewById(R.id.recordButton);
+		Button button = (Button) findViewById(R.id.recordButton);
+		
 		button.setOnClickListener(new View.OnClickListener() {
+			
 			public void onClick(View v) {
 				startPreview();
 			}
-		});
+		});	
+	    
 	}
+	private void viewEventTags(String eventName){
+		setContentView(R.layout.event_info); 
+		
+		Log.d("TESTARG", eventName);
+		ListView tagList = (ListView) findViewById(R.id.taglist);
+		ArrayList<String> tagArray = new ArrayList<String>();
 
+		//FIGURE out how to put these tags into an array adapter, using something like 
+		//		this.filesList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, db_results));
+		//then populate the listview with the tags.
+		//Then maybe make the leave a tag button work
+		
+		
+		try{             
+    			File tagFile = new File(Environment.getExternalStorageDirectory()+"/recordedMedia/"+eventName+".txt");
 
+	           //File f = new File(Environment.getExternalStorageDirectory()+"test.txt");             
+	           FileInputStream fileIS = new FileInputStream(tagFile);          
+	           BufferedReader buf = new BufferedReader(new InputStreamReader(fileIS));           
+	           String readString = new String();                
+
+	           while ((readString = buf.readLine()) != null) {
+					tagArray.add(readString);
+
+	               Log.d("line: ", readString);   
+	           }
+	           
+	           }
+		catch (FileNotFoundException e) {          
+	           e.printStackTrace();          
+	        }
+		catch (IOException e){             
+	           e.printStackTrace();          
+	    }    
+		tagList.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, tagArray));
+
+	}
+	
 	private void startPreview(){
 		setContentView(R.layout.camera_preview); 
 		mCamera = getCameraInstance();
@@ -161,7 +215,7 @@ public class ChronicleActivity extends Activity {
 						String value = input.getText().toString();
 						Calendar c = Calendar.getInstance(); 
 						int currentTime = c.get(Calendar.HOUR)*3600 + c.get(Calendar.MINUTE)*60 + c.get(Calendar.SECOND);;
-						tags=tags+value+":::"+"0000000000"+";;;";
+						tags=tags+value+":::"+"0000000000"+"\r\n";
 					}
 				});
 				tagAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -202,7 +256,7 @@ public class ChronicleActivity extends Activity {
 				tagAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						String value = input.getText().toString();
-						tags=tags+value+":::"+Integer.toString(currentTime-startTime)+";;;";
+						tags=tags+value+":::"+Integer.toString(currentTime-startTime)+"\r\n";
 					}
 				});
 				tagAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -268,7 +322,6 @@ public class ChronicleActivity extends Activity {
 		//fileDataBase.execSQL("INSERT INTO table_of_dics(value) VALUES('TEST')");
 		//fileDataBase.execSQL("INSERT INTO table_of_dics(value) VALUES('TEST3')");
 		//fileDataBase.execSQL("INSERT INTO table_of_dics(value) VALUES('TES2T')");
-
 		
 		ArrayList<String> db_results = new ArrayList<String>();
 		Cursor cursor = fileDataBase.rawQuery("SELECT value FROM table_of_dics ORDER BY value", null);

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:orientation="vertical"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   >
+ <FrameLayout
+   android:id="@+id/event_"
+   android:orientation="vertical"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   android:layout_weight="1">
+               <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+               		android:id="@+id/taglist"
+                   android:layout_width="fill_parent"
+                   android:layout_height="fill_parent"
+                   android:padding="10dp"
+                   android:textSize="16sp" >
+               </ListView>
+
+   </FrameLayout>
+           <Button
+               android:id="@+id/leaveatag"
+               android:gravity="bottom"
+               android:layout_height="103dp"
+               android:text="Leave a tag"
+               android:layout_weight="1" android:layout_gravity="bottom" android:layout_width="match_parent">
+           </Button>
+
+           <Button
+               android:id="@+id/viewVideoButton"
+               android:layout_height="103dp"
+               android:gravity="bottom"
+               android:text="View video from start"
+               android:layout_weight="1" android:layout_gravity="bottom" android:layout_width="match_parent">
+           </Button>
+
+
+</LinearLayout>
